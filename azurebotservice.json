@@ -1,0 +1,301 @@
+{
+    "name" : "azurebotservice",
+    "author" : "z1p",
+    "version" : 0.1,
+    "categories" : ["collaboration"],
+    "description" : "Provides interaction and integration with Azure Bot Service",
+    "icon" : null,
+    "requirements" : {
+        "jimi_min_version" : null,
+        "jimi_max_version" : null,
+        "plugins" : []
+    },
+    "collections" : {
+        "azurebotserviceconversation" : {
+            "display_name" : "azurebotserviceconversation",
+            "className" : "_azurebotserviceconversation",
+            "class_location" : "models.conversation",
+            "description" : "Collection that hold on going conversations.",
+            "fields" : [
+                { "schema_item" : "conversationId", "schema_value" : "conversationId", "type" : "input", "label" : "conversationId", "description" : "conversationId" },
+                { "schema_item" : "conductId", "schema_value" : "conductId", "type" : "input", "label" : "conductId", "description" : "ConductId for the conversation wait." },
+                { "schema_item" : "flowId", "schema_value" : "flowId", "type" : "input", "label" : "flowId", "description" : "FlowId for the conversation wait." },
+                { "schema_item" : "conversationData", "schema_value" : "conversationData", "type" : "json-input", "label" : "conversationData", "description" : "List of json values saved as the conversation was paused." },
+                { "schema_item" : "conversationExpiry", "schema_value" : "conversationExpiry", "type" : "input", "label" : "conversationExpiry", "description" : "Time at which a given conversation will expiry and be reset." }
+            ],
+            "data_out" : {
+
+            }
+        }
+    },
+    "triggers" : {
+        "azurebotserviceReply" : {
+            "display_name" : "azurebotserviceReply",
+            "className" : "_azurebotserviceReply",
+            "class_location" : "models.trigger",
+            "description" : "Trigger called when an outbound webhook is called from a teams channel matching the token configured within this trigger.",
+            "fields" : [
+                { "schema_item" : "token", "schema_value" : "token", "type" : "input", "label" : "token", "description" : "jimi secure token.", "required" : true, "jimi_syntax" : false },
+                { "schema_item" : "client_id", "schema_value" : "client_id", "type" : "input", "label" : "client_id", "description" : "Azure Application / Client id", "required" : true, "jimi_syntax" : false },
+                { "schema_item" : "client_secret", "schema_value" : "client_secret", "type" : "input", "label" : "client_secret", "description" : "Azure Application client secret", "required" : true, "jimi_syntax" : false }
+            ],
+            "data_out" : {
+                "event" : { 
+                    "description" : "Teams inbound message",
+                    "type" : "json",
+                    "always_present" : true,
+                    "values" : {
+                    }
+                }
+            }
+        }
+    },
+    "actions" : {
+        "azurebotserviceReply" : {
+            "display_name" : "azurebotserviceReply",
+            "className" : "_azurebotserviceReply",
+            "class_location" : "models.action",
+            "description" : "Posts a message to a configured inbound webhook within a team channel.",
+            "fields" : [
+                { "schema_item" : "message", "schema_value" : "message", "type" : "input", "label" : "message", "description" : "Message to post to the teams channel", "required" : true, "jimi_syntax" : true }
+            ],
+            "data_out" : {
+                "result" : { 
+                    "description" : "Returns True/False for success or failure.",
+                    "type" : "boolean",
+                    "always_present" : true,
+                    "values" : {
+                        "True" : { "description" : "Successfully posted the message." },
+                        "False" : { "description" : "Failed to posted the message." }
+                    }
+                },
+                "rc" : {
+                    "description" : "Returns the exit code.",
+                    "type" : "number",
+                    "always_present" : true,
+                    "values" : {
+                        "0" : { "description" : "Successfully posted the message." },
+                        "400" : { "description" : "Failed to posted the message." }
+                    }
+                },
+                "msg" : {
+                    "description" : "A message that outlines additional information about the result.",
+                    "type" : "text",
+                    "always_present" : false,
+                    "values" : {
+                        "(string)" : { "description" : "A message that outlines additional information about the result." }
+                    }
+                }
+            }
+        },
+        "azurebotserviceWait" : {
+            "display_name" : "azurebotserviceWait",
+            "className" : "_azurebotserviceWait",
+            "class_location" : "models.action",
+            "description" : "Holds the current conversation until another message is received.",
+            "fields" : [
+                { "schema_item" : "preserveData", "schema_value" : "preserveData", "type" : "json-input", "label" : "preserveData", "description" : "Any data that should be preserved and restored when the conversation is resumed.", "required" : true, "jimi_syntax" : true },
+                { "schema_item" : "waitFor", "schema_value" : "waitFor", "type" : "input", "label" : "waitFor", "description" : "How long should the conversation wait for in seconds for a reply.", "required" : true, "jimi_syntax" : false }
+
+            ],
+            "data_out" : {
+                "result" : { 
+                    "description" : "Returns True/False for success or failure.",
+                    "type" : "boolean",
+                    "always_present" : true,
+                    "values" : {
+                        "True" : { "description" : "Successfully resumed the conversation." },
+                        "False" : { "description" : "Conversation paused." }
+                    }
+                },
+                "rc" : {
+                    "description" : "Returns the exit code.",
+                    "type" : "number",
+                    "always_present" : true,
+                    "values" : {
+                        "0" : { "description" : "Successfully resumed the conversation." },
+                        "200" : { "description" : "Conversation paused." }
+                    }
+                },
+                "msg" : {
+                    "description" : "A message that outlines additional information about the result.",
+                    "type" : "text",
+                    "always_present" : false,
+                    "values" : {
+                        "(string)" : { "description" : "A message that outlines additional information about the result." }
+                    }
+                },
+                "conversationData" : {
+                    "description" : "Restored conversation data.",
+                    "type" : "json",
+                    "always_present" : false,
+                    "values" : {
+                        
+                    }
+                }
+            }
+        },
+        "azurebotserviceEnd" : {
+            "display_name" : "azurebotserviceEnd",
+            "className" : "_azurebotserviceEnd",
+            "class_location" : "models.action",
+            "description" : "Ends the current conversation.",
+            "fields" : [
+            ],
+            "data_out" : {
+                "result" : { 
+                    "description" : "Returns True/False for success or failure.",
+                    "type" : "boolean",
+                    "always_present" : true,
+                    "values" : {
+                        "True" : { "description" : "Conversation ended." }
+                    }
+                },
+                "rc" : {
+                    "description" : "Returns the exit code.",
+                    "type" : "number",
+                    "always_present" : true,
+                    "values" : {
+                        "0" : { "description" : "Conversation ended." }
+                    }
+                },
+                "msg" : {
+                    "description" : "A message that outlines additional information about the result.",
+                    "type" : "text",
+                    "always_present" : false,
+                    "values" : {
+                        "(string)" : { "description" : "A message that outlines additional information about the result." }
+                    }
+                }
+            }
+        },
+        "azurebotserviceGetActivityMembers" : {
+            "display_name" : "azurebotserviceGetActivityMembers",
+            "className" : "_azurebotserviceGetActivityMembers",
+            "class_location" : "models.action",
+            "description" : "Gets the current list of activity members.",
+            "fields" : [
+            ],
+            "data_out" : {
+                "result" : { 
+                    "description" : "Returns True/False for success or failure.",
+                    "type" : "boolean",
+                    "always_present" : true,
+                    "values" : {
+                        "True" : { "description" : "API call successful." },
+                        "False" : { "description" : "API called failed." }
+                    }
+                },
+                "rc" : {
+                    "description" : "Returns the exit code.",
+                    "type" : "number",
+                    "always_present" : true,
+                    "values" : {
+                        "0" : { "description" : "API call successful." },
+                        "500" : { "description" : "API called failed." }
+                    }
+                },
+                "members" : {
+                    "description" : "A list of members.",
+                    "type" : "json",
+                    "always_present" : true,
+                    "values" : {
+                    }
+                }
+            }
+        },
+        "azurebotserviceSend" : {
+            "display_name" : "azurebotserviceSend",
+            "className" : "_azurebotserviceSend",
+            "class_location" : "models.action",
+            "description" : "Sends a new message to a conversation.",
+            "fields" : [
+                { "schema_item" : "activityData", "schema_value" : "activityData", "type" : "json-input", "label" : "activityData", "description" : "The azure bot service API activity object. https://docs.microsoft.com/en-us/azure/bot-service/rest-api/bot-framework-rest-connector-api-reference?view=azure-bot-service-4.0#send-to-conversation", "required" : true, "jimi_syntax" : true },
+                { "schema_item" : "conversationId", "schema_value" : "conversationId", "type" : "input", "label" : "conversationId", "description" : "Existing conversation ID", "required" : true, "jimi_syntax" : true },
+                { "schema_item" : "client_id", "schema_value" : "client_id", "type" : "input", "label" : "client_id", "description" : "Azure bot service API client id ( optional ) - only needed when used outside of a incoming message trigger.", "required" : false, "jimi_syntax" : false },
+                { "schema_item" : "client_secret", "schema_value" : "client_secret", "type" : "input", "label" : "client_secret", "description" : "Azure bot service API client secret ( optional ) - only needed when used outside of a incoming message trigger.", "required" : false, "jimi_syntax" : false },
+                { "schema_item" : "service_url", "schema_value" : "service_url", "type" : "input", "label" : "service_url", "description" : "Azure bot service API client url ( optional ) - only needed when used outside of a incoming message trigger.", "required" : false, "jimi_syntax" : false }
+            ],
+            "data_out" : {
+                "result" : { 
+                    "description" : "Returns True/False for success or failure.",
+                    "type" : "boolean",
+                    "always_present" : true,
+                    "values" : {
+                        "True" : { "description" : "Successfully posted the message." },
+                        "False" : { "description" : "Failed to posted the message." }
+                    }
+                },
+                "rc" : {
+                    "description" : "Returns the exit code.",
+                    "type" : "number",
+                    "always_present" : true,
+                    "values" : {
+                        "0" : { "description" : "Successfully posted the message." },
+                        "400" : { "description" : "Failed to posted the message." }
+                    }
+                },
+                "msg" : {
+                    "description" : "A message that outlines additional information about the result.",
+                    "type" : "text",
+                    "always_present" : false,
+                    "values" : {
+                        "(string)" : { "description" : "A message that outlines additional information about the result." }
+                    }
+                },
+                "activity_id" : {
+                    "description" : "The ID of the activity created.",
+                    "type" : "text",
+                    "always_present" : false,
+                    "values" : {
+                    }
+                }
+            }
+        },
+        "azurebotserviceUpdateActivity" : {
+            "display_name" : "azurebotserviceUpdateActivity",
+            "className" : "_azurebotserviceUpdateActivity",
+            "class_location" : "models.action",
+            "description" : "Updates an existing activity.",
+            "fields" : [
+                { "schema_item" : "activityData", "schema_value" : "activityData", "type" : "json-input", "label" : "activityData", "description" : "The azure bot service API activity object. https://docs.microsoft.com/en-us/azure/bot-service/rest-api/bot-framework-rest-connector-api-reference?view=azure-bot-service-4.0#send-to-conversation", "required" : true, "jimi_syntax" : true },
+                { "schema_item" : "conversationId", "schema_value" : "conversationId", "type" : "input", "label" : "conversationId", "description" : "Existing conversation ID", "required" : true, "jimi_syntax" : true },
+                { "schema_item" : "activityId", "schema_value" : "activityId", "type" : "input", "label" : "activityId", "description" : "Existing activity ID", "required" : true, "jimi_syntax" : true },
+                { "schema_item" : "client_id", "schema_value" : "client_id", "type" : "input", "label" : "client_id", "description" : "Azure bot service API client id ( optional ) - only needed when used outside of a incoming message trigger.", "required" : false, "jimi_syntax" : false },
+                { "schema_item" : "client_secret", "schema_value" : "client_secret", "type" : "input", "label" : "client_secret", "description" : "Azure bot service API client secret ( optional ) - only needed when used outside of a incoming message trigger.", "required" : false, "jimi_syntax" : false },
+                { "schema_item" : "service_url", "schema_value" : "service_url", "type" : "input", "label" : "service_url", "description" : "Azure bot service API client url ( optional ) - only needed when used outside of a incoming message trigger.", "required" : false, "jimi_syntax" : false }
+            ],
+            "data_out" : {
+                "result" : { 
+                    "description" : "Returns True/False for success or failure.",
+                    "type" : "boolean",
+                    "always_present" : true,
+                    "values" : {
+                        "True" : { "description" : "Successfully posted the message." },
+                        "False" : { "description" : "Failed to posted the message." }
+                    }
+                },
+                "rc" : {
+                    "description" : "Returns the exit code.",
+                    "type" : "number",
+                    "always_present" : true,
+                    "values" : {
+                        "0" : { "description" : "Successfully posted the message." },
+                        "400" : { "description" : "Failed to posted the message." }
+                    }
+                },
+                "msg" : {
+                    "description" : "A message that outlines additional information about the result.",
+                    "type" : "text",
+                    "always_present" : false,
+                    "values" : {
+                        "(string)" : { "description" : "A message that outlines additional information about the result." }
+                    }
+                }
+            }
+        }
+    },
+    "settings" : {
+
+    }
+}
