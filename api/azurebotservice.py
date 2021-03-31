@@ -13,7 +13,7 @@ import jimi
 
 pluginPages = Blueprint('azurebotservicePages', __name__)
 
-@pluginPages.route("/azurebotservice/<token>/",methods=["POST"])
+@pluginPages.route("/<token>/",methods=["POST"])
 def azurebotservice(token):
     azureBotTrigger = trigger._azurebotserviceIncomingMessage().getAsClass(query={ "token" : token })[0]
     if azureBotTrigger.enabled:
